@@ -8,6 +8,7 @@ import AuthenticatedLayout from "../layouts/AuthenticatedLayout"; */
 import Home from "@/modules/home/pages/Home";
 import Login from "@/modules/auth/pages/Login";
 import Dashboard from "@/modules/admin/pages/Dashboard";
+import FlowPage from "@/modules/flow/pages/FlowPage";
 
 /* import Register from "../pages/public/Register"; */
 
@@ -23,6 +24,13 @@ export const routes: RouteConfig[] = [
     isPublic: true,
     layout: "public",
     name: "Inicio",
+  },
+  {
+    path: "/flow",
+    component: <FlowPage />,
+    isPublic: true,
+    layout: "public",
+    name: "DFD",
   },
   {
     path: "/login",
