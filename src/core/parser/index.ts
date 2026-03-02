@@ -31,8 +31,8 @@ const FinMientras = createToken({ name: "FinMientras", pattern: /[Ff]in[Mm]ientr
 const Verdadero = createToken({ name: "Verdadero", pattern: /[Vv]erdadero/, longer_alt: Identifier });
 const Falso = createToken({ name: "Falso", pattern: /[Ff]also/, longer_alt: Identifier });
 const Y = createToken({ name: "Y", pattern: /[Yy]/, longer_alt: Identifier });
-const O = createToken({ name: "O", pattern: /\b[Oo]\b/, longer_alt: Identifier });
-const No = createToken({ name: "No", pattern: /\b[Nn][Oo]\b/, longer_alt: Identifier });
+const O = createToken({ name: "O", pattern: /[Oo]/, longer_alt: Identifier });
+const No = createToken({ name: "No", pattern: /[Nn][Oo]/, longer_alt: Identifier });
 
 // Operators
 const Arrow = createToken({ name: "Arrow", pattern: /<-/ });

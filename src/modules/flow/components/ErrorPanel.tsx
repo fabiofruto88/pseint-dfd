@@ -14,7 +14,7 @@ export const ErrorPanel: React.FC<Props> = ({ errors }) => {
         Errores de sintaxis ({errors.length})
       </Typography>
       {errors.map((e, i) => (
-        <Alert key={i} severity="error" sx={{ py: 0.5 }}>
+        <Alert key={`${e.line}-${e.column}-${i}`} severity="error" sx={{ py: 0.5 }}>
           Línea {e.line}, col {e.column}: {e.message}
         </Alert>
       ))}
