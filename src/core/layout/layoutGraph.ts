@@ -15,12 +15,12 @@ const PAD_X = 24;
 const approximateSize = (label: string, type: string) => {
   const approx = label.length * 7.8 + PAD_X * 2;
   let width = Math.max(approx, 80);
-  let height = 40;
+  const height = 40;
 
-  // Diamonds need extra space because they extend beyond the bounding box
+  // Diamonds need extra horizontal space so dagre spreads branches apart,
+  // but height stays the same so branch nodes are placed well below.
   if (type === "decision") {
-    width *= 1.5;
-    height *= 1.5;
+    width *= 2.0;
   }
 
   return { width, height };
@@ -28,7 +28,7 @@ const approximateSize = (label: string, type: string) => {
 
 export const layoutGraph = (graph: FlowGraph): PositionedGraph => {
   const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: "TB", nodesep: 60, ranksep: 80 });
+  g.setGraph({ rankdir: "TB", nodesep: 60, ranksep: 120 });
   g.setDefaultEdgeLabel(() => ({}));
 
   graph.nodes.forEach((n) => {

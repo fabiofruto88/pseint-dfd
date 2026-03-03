@@ -28,6 +28,21 @@ function measureText(text: string): { w: number; h: number } {
 
 function nodeRect(n: PositionedNode) {
   const { w, h } = measureText(n.label);
+
+  // Diamonds should be wide and flat (like PSeInt), not proportionally tall.
+  // Use a fixed visual height of 55px regardless of label width.
+  if (n.type === "decision") {
+    const dh = 55;
+    return {
+      x: n.x - w / 2,
+      y: n.y - dh / 2,
+      w,
+      h: dh,
+      cx: n.x,
+      cy: n.y,
+    };
+  }
+
   return {
     x: n.x - w / 2,
     y: n.y - h / 2,
@@ -59,42 +74,34 @@ function diamondVertices(n: PositionedNode) {
 function getExitPoint(
   n: PositionedNode,
   target: PositionedNode,
-  edgeLabel?: string,
 ): { x: number; y: number } {
   const { cx, cy } = nodeRect(n);
 
   if (n.type === "decision") {
     const v = diamondVertices(n);
-    // Use label to determine exit vertex for Sí/No branches
-    if (edgeLabel) {
-      const lower = edgeLabel.toLowerCase().trim();
-      if (lower === "sí" || lower === "si" || lower === "verdadero")
-        return v.right;
-      if (lower === "no" || lower === "falso") return v.left;
-    }
-    // Fallback: determine by relative position of target
+    // Determine exit vertex based on the ACTUAL position of the target
+    // (dagre decides left/right placement, not the label text)
     const dx = target.x - cx;
     const dy = target.y - cy;
-    if (dx > 10) return v.right;
-    if (dx < -10) return v.left;
+    if (Math.abs(dx) > 10) {
+      return dx > 0 ? v.right : v.left;
+    }
     if (dy < 0) return v.top;
     return v.bottom;
   }
 
-  // For non-diamond nodes, use center of the closest rectangular edge
+  // For non-diamond nodes in a TB flowchart:
+  // prioritize bottom/top exits when target is clearly below/above
   const { w, h } = measureText(n.label);
   const hw = w / 2;
   const hh = h / 2;
   const dx = target.x - cx;
   const dy = target.y - cy;
 
-  if (Math.abs(dy) > Math.abs(dx)) {
-    if (dy > 0) return { x: cx, y: cy + hh }; // bottom
-    return { x: cx, y: cy - hh }; // top
-  } else {
-    if (dx > 0) return { x: cx + hw, y: cy }; // right
-    return { x: cx - hw, y: cy }; // left
-  }
+  if (dy > 20) return { x: cx, y: cy + hh }; // target below → exit bottom
+  if (dy < -20) return { x: cx, y: cy - hh }; // target above → exit top
+  if (dx > 0) return { x: cx + hw, y: cy }; // target right → exit right
+  return { x: cx - hw, y: cy }; // target left  → exit left
 }
 
 /**
@@ -119,19 +126,18 @@ function getEntryPoint(
     return v.top;
   }
 
+  // For non-diamond nodes in a TB flowchart:
+  // prioritize top/bottom entries when source is clearly above/below
   const { w, h } = measureText(n.label);
   const hw = w / 2;
   const hh = h / 2;
   const dx = source.x - cx;
   const dy = source.y - cy;
 
-  if (Math.abs(dy) > Math.abs(dx)) {
-    if (dy < 0) return { x: cx, y: cy - hh }; // top
-    return { x: cx, y: cy + hh }; // bottom
-  } else {
-    if (dx < 0) return { x: cx - hw, y: cy }; // left
-    return { x: cx + hw, y: cy }; // right
-  }
+  if (dy < -20) return { x: cx, y: cy - hh }; // source above → enter top
+  if (dy > 20) return { x: cx, y: cy + hh }; // source below → enter bottom
+  if (dx < 0) return { x: cx - hw, y: cy }; // source left  → enter left
+  return { x: cx + hw, y: cy }; // source right → enter right
 }
 
 /**
@@ -141,7 +147,6 @@ function getEntryPoint(
 function orthogonalPath(
   fromNode: PositionedNode,
   toNode: PositionedNode,
-  edgeLabel?: string,
   mergeFrom?: boolean,
   mergeTo?: boolean,
 ): {
@@ -151,7 +156,7 @@ function orthogonalPath(
 } {
   const fromPt = mergeFrom
     ? { x: fromNode.x, y: fromNode.y }
-    : getExitPoint(fromNode, toNode, edgeLabel);
+    : getExitPoint(fromNode, toNode);
   const toPt = mergeTo
     ? { x: toNode.x, y: toNode.y }
     : getEntryPoint(toNode, fromNode);
@@ -164,12 +169,15 @@ function orthogonalPath(
   let labelAnchor: "start" | "end" | "middle" = "middle";
 
   if (isLateralExit) {
-    // Lateral exit from diamond: go horizontal to target X, then vertical to target Y
-    pathD = `M ${fromPt.x} ${fromPt.y} H ${toPt.x} V ${toPt.y}`;
+    // Lateral exit from diamond: go horizontal to target center X,
+    // then vertical down to enter target from the TOP (like PSeInt)
+    const targetTop = mergeTo ? toNode.y : toNode.y - nodeRect(toNode).h / 2;
+    pathD = `M ${fromPt.x} ${fromPt.y} H ${toNode.x} V ${targetTop}`;
     // Label near the diamond vertex
-    const offsetX = toPt.x > fromPt.x ? 8 : -8;
+    const goingRight = fromPt.x > fromNode.x;
+    const offsetX = goingRight ? 8 : -8;
     labelPos = { x: fromPt.x + offsetX, y: fromPt.y - 6 };
-    labelAnchor = toPt.x > fromPt.x ? "start" : "end";
+    labelAnchor = goingRight ? "start" : "end";
   } else if (Math.abs(fromPt.x - toPt.x) < 2) {
     // Vertically aligned — straight vertical line
     pathD = `M ${fromPt.x} ${fromPt.y} V ${toPt.y}`;
@@ -387,7 +395,6 @@ const FlowViewer: React.FC<Props> = ({ graph }) => {
       const { d, labelPos, labelAnchor } = orthogonalPath(
         fromNode,
         toNode,
-        e.label,
         isMerge(e.from),
         isMerge(e.to),
       );
