@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dagre from "dagre";
 import type {
   FlowGraph,
@@ -5,21 +6,33 @@ import type {
   PositionedNode,
 } from "@/shared/types/flow";
 
-const approximateSize = (label: string) => {
-  const padding = 24;
-  const charWidth = 7;
-  const width = Math.max(80, Math.min(360, padding + charWidth * label.length));
-  const height = 44;
+/**
+ * Must match measureText() in FlowViewer.tsx exactly
+ * so dagre reserves the real rendered size.
+ */
+const PAD_X = 24;
+
+const approximateSize = (label: string, type: string) => {
+  const approx = label.length * 7.8 + PAD_X * 2;
+  let width = Math.max(approx, 80);
+  let height = 40;
+
+  // Diamonds need extra space because they extend beyond the bounding box
+  if (type === "decision") {
+    width *= 1.5;
+    height *= 1.5;
+  }
+
   return { width, height };
 };
 
 export const layoutGraph = (graph: FlowGraph): PositionedGraph => {
   const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: "TB", nodesep: 50, ranksep: 70 });
+  g.setGraph({ rankdir: "TB", nodesep: 60, ranksep: 80 });
   g.setDefaultEdgeLabel(() => ({}));
 
   graph.nodes.forEach((n) => {
-    const { width, height } = approximateSize(n.label || "");
+    const { width, height } = approximateSize(n.label || "", n.type);
     g.setNode(n.id, { ...n, width, height });
   });
 
