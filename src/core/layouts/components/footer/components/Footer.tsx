@@ -129,7 +129,7 @@ export default function Footer() {
         <Stack direction="row" spacing={1}>
           <IconButton
             color="inherit"
-            href="https://github.com"
+            href="https://github.com/fabiofruto88/pseint-dfd"
             target="_blank"
             aria-label="GitHub"
             size="small"
