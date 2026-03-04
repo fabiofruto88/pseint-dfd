@@ -11,6 +11,7 @@ import {
 import { usePseudocodeToDFD } from "@/core/hooks/usePseudocodeToDFD";
 import { ErrorPanel } from "@/shared/ui/ErrorPanel";
 import FlowViewer from "@/core/renderer/FlowViewer";
+import { HiOutlinePlay } from "react-icons/hi2";
 
 const sample = `Proceso Ejemplo
   Definir x Como Entero
@@ -28,13 +29,16 @@ export default function FlowPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Generar DFD desde PSeInt
+      <Typography variant="h4" fontWeight={700} gutterBottom>
+        Generador de Diagramas de Flujo
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        Pega tu pseudocódigo PSeInt y genera el DFD automáticamente.
       </Typography>
       <Paper sx={{ p: 2, mb: 2 }}>
         <Stack spacing={2}>
           <TextField
-            label="Pega tu pseudocódigo PSeInt"
+            label="Pseudocódigo PSeInt"
             value={text}
             onChange={(e) => setText(e.target.value)}
             multiline
@@ -47,7 +51,11 @@ export default function FlowPage() {
             }}
           />
           <Box>
-            <Button variant="contained" onClick={() => generate(text)}>
+            <Button
+              variant="contained"
+              onClick={() => generate(text)}
+              startIcon={<HiOutlinePlay size={18} />}
+            >
               Generar DFD
             </Button>
           </Box>

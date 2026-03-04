@@ -1,43 +1,24 @@
-// src/layouts/components/Footer.tsx
 import {
   Box,
-  Button,
   Container,
   IconButton,
   Link,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
-import useRequest from "@/core/hooks/useRequest";
+import { HiOutlineCpuChip } from "react-icons/hi2";
+import { FaGithub } from "react-icons/fa";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" mt={1}>
-      {"Copyright © "}
-      <Link href="#">footer base ts </Link>
-      {new Date().getFullYear()}
+      {"© "}
+      {new Date().getFullYear()} FlowPseud — Todos los derechos reservados.
     </Typography>
   );
 }
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const { post, loading } = useRequest();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await post("/masinfo", { correo: email }, false);
-      setEmail("");
-      alert("¡Gracias! Te enviaremos más información.");
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   return (
     <Container
       component="footer"
@@ -46,12 +27,12 @@ export default function Footer() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: { xs: 4, sm: 8 },
-        p: { xs: 4, sm: 8, md: 10 },
+        gap: { xs: 3, sm: 4 },
+        p: { xs: 3, sm: 5, md: 6 },
         textAlign: { sm: "center", md: "left" },
         borderTop: "1px solid",
         borderColor: "divider",
-        mt: "auto", // Empuja el footer al fondo
+        mt: "auto",
         bgcolor: "background.paper",
       }}
     >
@@ -61,117 +42,72 @@ export default function Footer() {
           flexDirection: { xs: "column", sm: "row" },
           width: "100%",
           justifyContent: "space-between",
+          alignItems: { xs: "center", sm: "flex-start" },
+          gap: 3,
         }}
       >
-        {/* Newsletter */}
+        {/* Brand */}
         <Box
-          component="form"
-          onSubmit={handleSubmit}
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 4,
-            minWidth: { xs: "100%", sm: "60%" },
+            alignItems: { xs: "center", sm: "flex-start" },
+            gap: 1,
+            maxWidth: 350,
           }}
         >
-          <Box sx={{ width: { xs: "100%", sm: "60%" } }}>
-            <Box sx={{ ml: "-15px" }}>
-              {/*  <img src={logo} style={logoStyle} alt="Logo" /> */}
-            </Box>
-            <Typography variant="body2" fontWeight={600} gutterBottom>
-              footer base ts
+          <Stack direction="row" spacing={1} alignItems="center">
+            <HiOutlineCpuChip size={24} />
+            <Typography variant="h6" fontWeight={800}>
+              FlowPseud
             </Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
-              ¿De qué se trata?, ¡pide más info a tu correo!
-            </Typography>
-            <Stack direction="row" spacing={1} useFlexGap>
-              <TextField
-                size="small"
-                variant="outlined"
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="Tu correo electrónico"
-                type="email"
-                disabled={loading}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ flexShrink: 0 }}
-                disabled={loading}
-              >
-                {loading ? "Enviando..." : "Más info"}
-              </Button>
-            </Stack>
-          </Box>
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            Herramienta gratuita para convertir pseudocódigo PSeInt en Diagramas
+            de Flujo de Datos. Sin registro, sin complicaciones.
+          </Typography>
         </Box>
 
-        {/* Sistema */}
+        {/* Links */}
         <Box
           sx={{
-            display: { xs: "none", sm: "flex" },
+            display: "flex",
             flexDirection: "column",
             gap: 1,
+            alignItems: { xs: "center", sm: "flex-start" },
           }}
         >
           <Typography variant="body2" fontWeight={600}>
-            Sistema
+            Navegación
           </Typography>
-          <Link color="text.secondary" href="#">
-            Documentación
+          <Link color="text.secondary" href="/" underline="hover">
+            Inicio
           </Link>
-          <Link color="text.secondary" href="#">
-            FAQs
+          <Link color="text.secondary" href="/flow" underline="hover">
+            Generador DFD
           </Link>
         </Box>
 
-        {/* Desarrolladores */}
-        {/* <Box
-          sx={{
-            display: { xs: "none", sm: "flex" },
-            flexDirection: "column",
-            gap: 1,
-          }}
-        >
-          <Typography variant="body2" fontWeight={600}>
-            Desarrolladores
-          </Typography>
-          <Link
-            color="text.secondary"
-            href="https://www.instagram.com/fabiofruto8/"
-            target="_blank"
-          >
-            Fabio Fruto
-          </Link>
-          <Link
-            color="text.secondary"
-            href="https://www.instagram.com/jesulin_jimenez"
-            target="_blank"
-          >
-            Jesus Jimenez
-          </Link>
-        </Box> */}
-
-        {/* Legal */}
+        {/* About */}
         <Box
           sx={{
-            display: { xs: "none", sm: "flex" },
+            display: "flex",
             flexDirection: "column",
             gap: 1,
+            alignItems: { xs: "center", sm: "flex-start" },
           }}
         >
           <Typography variant="body2" fontWeight={600}>
-            Legal
+            Acerca de
           </Typography>
-          <Link color="text.secondary" href="#">
-            Términos
-          </Link>
-          <Link color="text.secondary" href="#">
-            Privacidad
-          </Link>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ maxWidth: 220 }}
+          >
+            FlowPseud es un proyecto open source para estudiantes y docentes de
+            programación.
+          </Typography>
         </Box>
       </Box>
 
@@ -179,28 +115,26 @@ export default function Footer() {
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          pt: { xs: 4, sm: 8 },
+          alignItems: "center",
+          pt: 3,
           width: "100%",
           borderTop: "1px solid",
           borderColor: "divider",
+          gap: 1,
         }}
       >
-        <div>
-          <Link color="text.secondary" href="#">
-            Política de privacidad
-          </Link>
-          <Typography display="inline" sx={{ mx: 0.5, opacity: 0.5 }}>
-            &nbsp;•&nbsp;
-          </Typography>
-          <Link color="text.secondary" href="#">
-            Términos y condiciones
-          </Link>
-          <Copyright />
-        </div>
-        <Stack direction="row" justifyContent="left" spacing={1} useFlexGap>
-          <IconButton color="inherit" href="#" aria-label="Logo UIB">
-            {/*  <img src={logo2} style={logoStyle2} alt="Logo de UIB" /> */}
+        <Copyright />
+        <Stack direction="row" spacing={1}>
+          <IconButton
+            color="inherit"
+            href="https://github.com"
+            target="_blank"
+            aria-label="GitHub"
+            size="small"
+          >
+            <FaGithub size={20} />
           </IconButton>
         </Stack>
       </Box>

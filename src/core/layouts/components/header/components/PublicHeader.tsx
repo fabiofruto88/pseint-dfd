@@ -18,13 +18,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Hotel as HotelIcon } from "@mui/icons-material";
-import {
-  SunIcon,
-  MoonIcon,
-  HomeIcon,
-  Bars3Icon,
-} from "@heroicons/react/24/solid";
+import { SunIcon, MoonIcon, Bars3Icon } from "@heroicons/react/24/solid";
+import { HiOutlineCpuChip } from "react-icons/hi2";
 
 import { useThemeContext } from "../../../../../context/theme-context";
 
@@ -46,26 +41,22 @@ export default function PublicHeader() {
       role="presentation"
       onClick={() => setMobileOpen(false)}
     >
-      <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
-        <HotelIcon sx={{ color: "primary.main", fontSize: 28, mr: 1 }} />
+      <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
+        <HiOutlineCpuChip size={24} color={theme.palette.primary.main} />
         <Typography variant="h6" fontWeight={800}>
-          BASE
+          FlowPseud
         </Typography>
       </Box>
       <Divider />
       <List>
         <ListItem disablePadding>
           <ListItemButton onClick={() => navigate("/")}>
-            <ListItemIcon>
-              <HomeIcon
-                style={{
-                  width: 20,
-                  height: 20,
-                  color: theme.palette.primary.main,
-                }}
-              />
-            </ListItemIcon>
             <ListItemText primary="Inicio" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate("/flow")}>
+            <ListItemText primary="Generador DFD" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -90,16 +81,6 @@ export default function PublicHeader() {
               )}
             </ListItemIcon>
             <ListItemText primary={isDarkMode ? "Modo claro" : "Modo oscuro"} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => navigate("/register")}>
-            <ListItemText primary="Registrarse" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => navigate("/login")}>
-            <ListItemText primary="Iniciar Sesión" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -128,12 +109,17 @@ export default function PublicHeader() {
 
           {/* Logo */}
           <Box
-            sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+              gap: 1,
+            }}
             onClick={() => navigate("/")}
           >
-            {/*        <HotelIcon sx={{ color: "primary.main", fontSize: 28, mr: 1 }} /> */}
+            <HiOutlineCpuChip size={28} color={theme.palette.primary.main} />
             <Typography variant="h6" component="div" fontWeight={800}>
-              BASE
+              FlowPseud
             </Typography>
           </Box>
 
@@ -165,38 +151,12 @@ export default function PublicHeader() {
               )}
             </IconButton>
 
-            {/* Desktop navigation */}
-            <Button
-              color="inherit"
-              startIcon={
-                <HomeIcon
-                  style={{
-                    width: 20,
-                    height: 20,
-                    color: theme.palette.primary.main,
-                  }}
-                />
-              }
-              sx={{ display: { xs: "none", md: "inline-flex" } }}
-              onClick={() => navigate("/")}
-            >
-              Inicio
-            </Button>
-
-            <Button
-              color="inherit"
-              onClick={() => navigate("/register")}
-              sx={{ display: { xs: "none", md: "inline-flex" } }}
-            >
-              Registrarse
-            </Button>
-
             <Button
               variant="contained"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/flow")}
               sx={{ display: { xs: "none", md: "inline-flex" } }}
             >
-              Iniciar Sesión
+              Generador DFD
             </Button>
           </Stack>
         </Toolbar>
