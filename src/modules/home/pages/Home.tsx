@@ -8,7 +8,6 @@ import {
   Grid,
   Stack,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -58,7 +57,6 @@ const steps = [
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const _isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <Box>
